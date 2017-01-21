@@ -9,21 +9,28 @@ module.exports = function(app) {
   app.post('/api/friends', function(req, res) {
       // push new data
       friendsData.push(req.body);
-     
-      newData = req.body.scores;
+
+      var newData = req.body.scores,
+      checkLowest = [],
+      lowestScore = 0;
       // console.log(newData);
 
       // look through the existing array
-    var difference = 0;
     for (var i = 0; i < friendsData.length - 1; i++) {
+      var difference = 0;
       for (var j = 0; j< friendsData[i].scores.length; j++) {
-    	//console.log(friendsData[i].scores[j]);
-    	//console.log(newData[j]);
     	difference += Math.abs(friendsData[i].scores[j] - newData[j]);
-    	console.log(difference);
       }
-      
+      // add score to array
+      checkLowest.push(difference);
+
+      // if there are more than one person
+      if (i > 0) {
+      	if (checkLowest[lowestScore] > checkLowest[i]) {
+      	  lowestScore = i;
+        }
+      }
     }
-     // res.json(friendsData);
+    res.json(friendsData[lowestScore]);
   });
 }
